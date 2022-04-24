@@ -1,0 +1,107 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Queue;
+import java.util.StringTokenizer;
+
+
+/*
+ * 1. 최소 스패닝 트리를 구한다.
+ * 2. 최소 스패닝 트리를 구성하는 경로의 간선의 합을 구한다.
+ * 3. 간선 중 최댓값을 합에서 뺀다.
+ * 
+ * Prim or Kruskal
+ */
+
+public class Main_1647 {
+
+	static class Vertex implements Comparable<Vertex>{
+
+		int n;
+		int cost;
+		
+		Vertex(int n, int cost){
+			this.n = n;
+			this.cost = cost;
+		}
+		
+		@Override
+		public int compareTo(Vertex o) {
+			return this.cost - o.cost;
+		}
+		
+	}
+	
+	static int N, M;
+	static List<List<Vertex>> edgeList;
+	public static void main(String[] args) throws IOException{
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st = new StringTokenizer(br.readLine());
+		
+		N = Integer.parseInt(st.nextToken());
+		M = Integer.parseInt(st.nextToken());
+		
+		edgeList = new ArrayList<>();
+		for(int i=0;i<=N;i++) {
+			edgeList.add(new ArrayList<Vertex>());
+			
+		}
+		
+		for(int i=0;i<M;i++) {
+			st = new StringTokenizer(br.readLine());
+			int a = Integer.parseInt(st.nextToken());
+			int b = Integer.parseInt(st.nextToken());
+			int c = Integer.parseInt(st.nextToken());
+			
+			edgeList.get(a).add(new Vertex(b,c));
+			edgeList.get(b).add(new Vertex(a,c));
+		}
+		
+		prim();
+	}
+	
+	public static void prim() {
+		
+		int totalCost = 0;
+		int maxCost = Integer.MIN_VALUE;
+		
+		boolean[] visited = new boolean[N+1];
+		PriorityQueue<Vertex> pq = new PriorityQueue<>();
+		Queue<Integer> q = new LinkedList<>();
+		q.add(1); // 1번 노드부터 시작
+		visited[1] = true;
+		
+		while(!q.isEmpty()){
+			int n = q.poll();
+			
+			// 0번 노드로부터 연결된 간선들을 pq에 집어넣음
+			for(Vertex v : edgeList.get(n)) {
+				pq.add(v);
+			}
+			
+			while(!pq.isEmpty()) {
+				Vertex nowV = pq.poll();
+				
+				// 현재 정점 집합에서 가장 최소 간선이면서 연결하지 않은 정점이면 연결
+				if(!visited[nowV.n]) {
+					visited[nowV.n] = true; 
+					q.add(nowV.n);
+					totalCost+=nowV.cost;
+					if(maxCost<nowV.cost)maxCost = nowV.cost;
+					
+					// 최소 간선을 연결했으면 다음 점을 포함한 정점집합에서 다시 간선을 체크하기 위해
+					// 더 이상 pq의 값을 빼지 않고 다음 점에서부터 연결된 간선을 pq에 넣는다
+					break;  
+				}
+			}
+		}
+		
+		System.out.println(totalCost - maxCost);
+		
+	}
+
+}

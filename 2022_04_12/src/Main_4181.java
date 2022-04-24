@@ -27,7 +27,6 @@ public class Main_4181 {
 		
 		StringTokenizer st = null;
 		
-		int cnt = 0;
 		List<Point> pointList = new ArrayList<>();
 		for(int i=0;i<N;i++) {
 			st = new StringTokenizer(br.readLine());
@@ -36,7 +35,6 @@ public class Main_4181 {
 			char c = st.nextToken().charAt(0);
 			
 			if(c == 'Y') {
-				cnt++;
 				pointList.add(new Point(x,y));
 			}
 		}
